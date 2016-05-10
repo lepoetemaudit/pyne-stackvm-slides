@@ -10,6 +10,7 @@
 
 * Emulators (systems, games consoles)
 * Sandboxed environment
+* Language runtimes (e.g. Python, JVM, .NET)
 * Learning about processor design
 * Scripting for your application
 * The sheer hell of it
@@ -79,6 +80,11 @@ If we fiddle a little bit with the assembler, we can get something that looks li
 This looks like an RPN calculator! And it is.
 
 Making a toy language for a stack-based VM should be as simple as sugaring up its assembler representation...
+
+## Real vs virtual machines
+
+- Hardware machines tend to be register based
+- Virtual machines are very often stack based (Lua, Python, JVM)
 
 # A brief rant about 'bare-metal'
 
@@ -518,7 +524,9 @@ python machine.py bin/countdown.djo
 
 ## This project
 
-- Finish making call/return syntax
+- Memory / variable access
+- <br>
+- Implement call/return for functions
 - <br>
 - Add other arithmetic operators (*, /, % etc)
 - <br>
@@ -526,9 +534,9 @@ python machine.py bin/countdown.djo
 
 ## Other projects
 
-- Make a lisp [add link]
+- Make a lisp [https://github.com/kanaka/mal](https://github.com/kanaka/mal)
 - <br>
-- SICP [add link]
+- SICP [http://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-001-structure-and-interpretation-of-computer-programs-spring-2005/video-lectures/](http://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-001-structure-and-interpretation-of-computer-programs-spring-2005/video-lectures/)
 
 ## Final word
 
@@ -540,6 +548,12 @@ matching)
 I used `mypy` [http://mypy-lang.org/](http://mypy-lang.org/) when preparing this talk, which also
 really helped.
 
-Lisps, although dynamic are also excellent due to their syntactic
-flexibility. Plus, code as data means you may even be able to implement
-your toy language within LISP itself.
+Lisps, although dynamic, are also excellent due to their syntactic
+flexibility. Plus, "code as data" means you may even be able to implement
+your toy language within LISP itself (or why not make a LISP?)
+
+## Thank you
+
+- Dave Jeffrey
+- Lead developer at SoPost
+- @unpoetemaudit
