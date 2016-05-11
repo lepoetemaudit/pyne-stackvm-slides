@@ -1,10 +1,14 @@
 % Implementing a Stack-based VM and Compiler in Python
-% Dave Jeffrey // @unpoetemaudit // March 11, 2016
+% Dave Jeffrey // @unpoetemaudit // May 11th, 2016
 % With thanks to Paweł Widera whose template I ~~stole~~ based this off
 
 ## A brief introduction
 
-![to imlementing virtual machines and compilers with Python](https://i.ytimg.com/vi/lt-udg9zQSE/hqdefault.jpg)
+![to implementing virtual machines and compilers with Python](https://i.ytimg.com/vi/lt-udg9zQSE/hqdefault.jpg)
+
+## Follow online
+
+http://tinyurl.com/jty6cck
 
 ## Why implement a virtual machine?
 
