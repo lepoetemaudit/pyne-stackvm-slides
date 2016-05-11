@@ -111,7 +111,7 @@ Machine = namedtuple(
     ['main_stack',
      'call_stack',
      'instruction_pointer',
-     'code']
+     'code'])
 
 
 # Definition of instructions
@@ -122,9 +122,6 @@ Instruction = namedtuple(
      'execute'])
 
 def w(val):
-    """
-    Enforce the constraint of our 'machine' word (a 16bit signed int)
-    """
     while val > MAX_INT:
         val -= 0x10000
 
@@ -171,11 +168,6 @@ def make_machine(code=None):
 ## Define our opcodes
 
 ~~~{.python}
-"""
-opcodes.py
-Define constants for our opcodes
-"""
-
 # Stack operations
 PUSH = 0x01
 POP = 0x02
@@ -321,6 +313,24 @@ dispatch_table = {
 ## It's really simple:
 
 ```python
+def next_instruction(machine):
+    main_stack, call_stack, ip, code = machine
+
+    # Bounds check on ip
+    if ip >= len(code) or ip < 0:
+        raise MachineError(
+            "ip out of code range: ip=%d, code size=%d" % (ip, len(code)),
+            machine)
+
+    # Fetch next instruction opcode (or argument for certain opcodes)
+    opcode = code[ip]
+
+    # Return the machine with the instruction pointer incremented
+    return opcode, Machine(main_stack, call_stack, ip+1, code)
+```
+## And step the machine instruction by instruction
+
+```python
 def step_machine(machine, debug=True):
     opcode, machine = next_instruction(machine)
 
@@ -353,7 +363,7 @@ def run_machine(machine, debug=True):
                 machine)
 
         # Stop on HALT instruction
-        if machine.code[machine.instruction_pointer] == opcodes.HALT:
+        if machine.code[machine.instruction_pointer] == HALT:
             if debug:
                 print("++ HALT")
             return machine
@@ -387,7 +397,7 @@ PUSH_AND_HALT = [
     PUSH, 0x66, # PUSH 66
     HALT]       # HALT
 
-machine.run_code_for_result(PUSH_AND_HALT)
+run_code_for_result(PUSH_AND_HALT)
 # Result -> 66
 
 ADD_TWO_AND_THREE = [
@@ -396,7 +406,7 @@ ADD_TWO_AND_THREE = [
     ADD,       # ADD
     HALT]      # HALT
 
-machine.run_code_for_result(ADD_TWO_AND_THREE)
+run_code_for_result(ADD_TWO_AND_THREE)
 # Result -> 5
 
 ```
