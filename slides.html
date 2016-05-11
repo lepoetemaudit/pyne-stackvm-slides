@@ -331,7 +331,7 @@ Machine <span class="op">=</span> namedtuple(
     [<span class="st">&#39;main_stack&#39;</span>,
      <span class="co">&#39;call_stack&#39;</span>,
      <span class="co">&#39;instruction_pointer&#39;</span>,
-     <span class="co">&#39;code&#39;</span>]
+     <span class="co">&#39;code&#39;</span>])
 
 
 <span class="co"># Definition of instructions</span>
@@ -342,9 +342,6 @@ Instruction <span class="op">=</span> namedtuple(
      <span class="co">&#39;execute&#39;</span>])
 
 <span class="kw">def</span> w(val):
-    <span class="co">&quot;&quot;&quot;</span>
-<span class="co">    Enforce the constraint of our &#39;machine&#39; word (a 16bit signed int)</span>
-<span class="co">    &quot;&quot;&quot;</span>
     <span class="cf">while</span> val <span class="op">&gt;</span> MAX_INT:
         val <span class="op">-=</span> <span class="bn">0x10000</span>
 
@@ -384,12 +381,7 @@ Instruction <span class="op">=</span> namedtuple(
         instruction_pointer<span class="op">=</span><span class="dv">0</span>, code<span class="op">=</span>code <span class="op">or</span> [])        </code></pre></div>
 </section><section id="define-our-opcodes" class="slide level2">
 <h1>Define our opcodes</h1>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co">&quot;&quot;&quot;</span>
-<span class="co">opcodes.py</span>
-<span class="co">Define constants for our opcodes</span>
-<span class="co">&quot;&quot;&quot;</span>
-
-<span class="co"># Stack operations</span>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Stack operations</span>
 PUSH <span class="op">=</span> <span class="bn">0x01</span>
 POP <span class="op">=</span> <span class="bn">0x02</span>
 COPY <span class="op">=</span> <span class="bn">0x03</span>
@@ -511,6 +503,22 @@ HALT <span class="op">=</span> <span class="bn">0x00</span></code></pre></div>
 </ul>
 </section><section id="its-really-simple" class="slide level2">
 <h1>It's really simple:</h1>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> next_instruction(machine):
+    main_stack, call_stack, ip, code <span class="op">=</span> machine
+
+    <span class="co"># Bounds check on ip</span>
+    <span class="cf">if</span> ip <span class="op">&gt;=</span> <span class="bu">len</span>(code) <span class="op">or</span> ip <span class="op">&lt;</span> <span class="dv">0</span>:
+        <span class="cf">raise</span> MachineError(
+            <span class="st">&quot;ip out of code range: ip=</span><span class="sc">%d</span><span class="st">, code size=</span><span class="sc">%d</span><span class="st">&quot;</span> <span class="op">%</span> (ip, <span class="bu">len</span>(code)),
+            machine)
+
+    <span class="co"># Fetch next instruction opcode (or argument for certain opcodes)</span>
+    opcode <span class="op">=</span> code[ip]
+
+    <span class="co"># Return the machine with the instruction pointer incremented</span>
+    <span class="cf">return</span> opcode, Machine(main_stack, call_stack, ip<span class="dv">+1</span>, code)</code></pre></div>
+</section><section id="and-step-the-machine-instruction-by-instruction" class="slide level2">
+<h1>And step the machine instruction by instruction</h1>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> step_machine(machine, debug<span class="op">=</span><span class="va">True</span>):
     opcode, machine <span class="op">=</span> next_instruction(machine)
 
@@ -541,7 +549,7 @@ HALT <span class="op">=</span> <span class="bn">0x00</span></code></pre></div>
                 machine)
 
         <span class="co"># Stop on HALT instruction</span>
-        <span class="cf">if</span> machine.code[machine.instruction_pointer] <span class="op">==</span> opcodes.HALT:
+        <span class="cf">if</span> machine.code[machine.instruction_pointer] <span class="op">==</span> HALT:
             <span class="cf">if</span> debug:
                 <span class="bu">print</span>(<span class="st">&quot;++ HALT&quot;</span>)
             <span class="cf">return</span> machine
@@ -566,7 +574,7 @@ PUSH_AND_HALT <span class="op">=</span> [
     PUSH, <span class="bn">0x66</span>, <span class="co"># PUSH 66</span>
     HALT]       <span class="co"># HALT</span>
 
-machine.run_code_for_result(PUSH_AND_HALT)
+run_code_for_result(PUSH_AND_HALT)
 <span class="co"># Result -&gt; 66</span>
 
 ADD_TWO_AND_THREE <span class="op">=</span> [
@@ -575,7 +583,7 @@ ADD_TWO_AND_THREE <span class="op">=</span> [
     ADD,       <span class="co"># ADD</span>
     HALT]      <span class="co"># HALT</span>
 
-machine.run_code_for_result(ADD_TWO_AND_THREE)
+run_code_for_result(ADD_TWO_AND_THREE)
 <span class="co"># Result -&gt; 5</span></code></pre></div>
 <p><br> Some more example programs: <a href="https://github.com/lepoetemaudit/pyne-stackvm/blob/master/programs.py" class="uri">https://github.com/lepoetemaudit/pyne-stackvm/blob/master/programs.py</a></p>
 </section>
